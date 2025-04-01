@@ -52,6 +52,13 @@
                 <i class="fas fa-key mr-2 group-hover:scale-110 transition-transform"></i>
                 Reset Password
             </button>
+
+            <a href="/download" class="group flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all
+                bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700
+                text-white shadow-md hover:shadow-lg mt-3">
+                <i class="fas fa-download mr-2 group-hover:scale-110 transition-transform"></i>
+                Download Application
+            </a>
         </div>
     </div>
 
@@ -99,6 +106,29 @@
       </form>
     </div>
 
+    <div class="fixed bottom-4 right-4 z-50">
+        <a href="/download" 
+           class="flex items-center justify-center px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg transition-all
+                  animate-bounce hover:animate-none">
+            <i class="fas fa-download mr-2"></i>
+            Install App
+        </a>
+    </div>
+
     <script src="/script.js"></script>
+    <script>
+      // Register service worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+              console.log('ServiceWorker registration successful');
+            })
+            .catch(err => {
+              console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+      }
+    </script>
 </body>
 </html>
