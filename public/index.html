@@ -15,7 +15,7 @@
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center">
-    <div class="bg-white bg-opacity-90 p-8 rounded-lg shadow-xl w-full max-w-md">
+    <div class="bg-white bg-opacity-90 p-6 rounded-lg shadow-xl w-full max-w-md">
         <div class="text-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Employee Portal</h1>
             <p id="current-time" class="text-gray-600 mt-2"></p>
@@ -38,7 +38,67 @@
                 </button>
             </div>
         </form>
+        <div class="mt-6 flex flex-col space-y-3">
+            <button id="show-create-form" class="group flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all
+                bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700
+                text-white shadow-md hover:shadow-lg">
+                <i class="fas fa-user-plus mr-2 group-hover:scale-110 transition-transform"></i>
+                Create New Account
+            </button>
+            
+            <button id="show-reset-form" class="group flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all
+                bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700
+                text-white shadow-md hover:shadow-lg">
+                <i class="fas fa-key mr-2 group-hover:scale-110 transition-transform"></i>
+                Reset Password
+            </button>
+        </div>
     </div>
+
+    <div id="create-account-form" class="hidden mt-6 bg-white bg-opacity-95 p-6 rounded-xl shadow-lg border border-gray-100">
+      <h2 class="text-xl font-bold mb-4">Create New Employee</h2>
+      <form id="create-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Employee ID</label>
+          <input type="text" id="new-employee-id" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Full Name</label>
+          <input type="text" id="new-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Password</label>
+          <input type="password" id="new-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+        </div>
+        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md">
+          Create Account
+        </button>
+      </form>
+    </div>
+
+    <div id="reset-password-form" class="hidden mt-6 bg-white bg-opacity-95 p-6 rounded-xl shadow-lg border border-gray-100">
+      <h2 class="text-xl font-bold mb-4">Reset Password</h2>
+      <form id="reset-form" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Employee ID</label>
+          <input type="text" id="reset-employee-id" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">New Password</label>
+          <input type="password" id="new-password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+        </div>
+        <input type="hidden" id="reset-token">
+        <div class="grid grid-cols-2 gap-4">
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md">
+            Reset Password
+          </button>
+          <button type="button" id="cancel-reset" class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
     <script src="/script.js"></script>
 </body>
 </html>
