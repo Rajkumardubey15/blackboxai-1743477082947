@@ -5,6 +5,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -256,6 +257,46 @@ app.post('/api/password/reset', async (req, res) => {
         console.error(error);
         res.status(400).json({ error: 'Invalid or expired token' });
     }
+});
+
+// Mobile download and PWA endpoints
+app.get('/download', (req, res) => {
+    const filePath = path.join(__dirname, 'public', 'downloads', 'employee-app.apk');
+    
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ 
+            error: 'Mobile application not available',
+            solution: 'Please contact IT support or try again later',
+            status: 'not_found'
+        });
+    }
+
+    // Set proper headers for APK download
+    res.set({
+        'Content-Type': 'application/vnd.android.package-archive',
+        'Content-Disposition': 'attachment; filename="employee-portal.apk"',
+        'Content-Length': fs.statSync(filePath).size,
+        'Cache-Control': 'no-cache'
+    });
+
+    // Stream the file with error handling
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+    
+    fileStream.on('error', (err) => {
+        console.error('Download error:', err);
+        if (!res.headersSent) {
+            res.status(500).json({ 
+                error: 'Download failed',
+                details: err.message,
+                status: 'download_error'
+            });
+        }
+    });
+});
+
+app.get('/manifest.json', (req, res) => {
+    res.sendFile(`${__dirname}/public/manifest.json`);
 });
 
 // Initialize database and start server
