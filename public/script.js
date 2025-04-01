@@ -35,6 +35,12 @@ function init() {
         window.location.href = '/public/index.html';
         return;
     }
+
+    // Set up export button listener
+    const exportBtn = document.getElementById('export-btn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', handleExport);
+    }
     
     // Load saved state from localStorage
     loadState();
@@ -72,7 +78,7 @@ function init() {
                 
                 const { token, name } = await response.json();
                 localStorage.setItem('token', token);
-                window.location.href = '/public/dashboard.html';
+                window.location.href = '/dashboard.html';
             } catch (error) {
                 console.error('Login error:', error);
                 alert('Login failed. Please check your credentials.');
@@ -248,5 +254,118 @@ function loadState() {
     }
 }
 
+// Handle Excel export
+async function handleExport() {
+    try {
+        const token = localStorage.getItem('token');
+        const exportBtn = document.getElementById('export-btn');
+        
+        // Show loading state
+        exportBtn.disabled = true;
+        exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin text-lg mr-2"></i><span>Exporting...</span>';
+        
+        const response = await fetch('/api/attendance/export', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) throw new Error('Export failed');
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'attendance.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+        
+    } catch (error) {
+        console.error('Export error:', error);
+        alert('Export failed. Please try again.');
+    } finally {
+        const exportBtn = document.getElementById('export-btn');
+        if (exportBtn) {
+            exportBtn.disabled = false;
+            exportBtn.innerHTML = '<i class="fas fa-file-excel text-lg mr-2"></i><span>Export Attendance</span>';
+        }
+    }
+}
+
+// Handle account creation
+async function handleCreateAccount(e) {
+  e.preventDefault();
+  const employeeId = document.getElementById('new-employee-id').value;
+  const name = document.getElementById('new-name').value;
+  const password = document.getElementById('new-password').value;
+
+  try {
+    const response = await fetch('/api/employees', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        employee_id: employeeId,
+        name,
+        password
+      })
+    });
+
+    if (!response.ok) throw new Error('Creation failed');
+    
+    const { token, name } = await response.json();
+    localStorage.setItem('token', token);
+    window.location.href = '/public/dashboard.html';
+  } catch (error) {
+    console.error(error);
+    alert('Account creation failed: ' + error.message);
+  }
+}
+
 // Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+  
+  // Add create account form toggle
+  const showCreateBtn = document.getElementById('show-create-form');
+  if (showCreateBtn) {
+    showCreateBtn.addEventListener('click', () => {
+      document.getElementById('create-account-form').classList.toggle('hidden');
+    });
+  }
+
+  // Add create form handler
+  const createForm = document.getElementById('create-form');
+  if (createForm) {
+    createForm.addEventListener('submit', handleCreateAccount);
+  }
+
+  // Add reset form toggle
+  const showResetBtn = document.getElementById('show-reset-form');
+  if (showResetBtn) {
+    showResetBtn.addEventListener('click', () => {
+      document.getElementById('reset-password-form').classList.toggle('hidden');
+    });
+  }
+
+  // Add reset form handler
+  const resetForm = document.getElementById('reset-form');
+  if (resetForm) {
+    resetForm.addEventListener('submit', handlePasswordReset);
+  }
+
+  // Add cancel reset handler
+  const cancelResetBtn = document.getElementById('cancel-reset');
+  if (cancelResetBtn) {
+    cancelResetBtn.addEventListener('click', () => {
+      document.getElementById('reset-password-form').classList.add('hidden');
+      document.getElementById('reset-token').value = '';
+      document.getElementById('reset-employee-id').value = '';
+      document.getElementById('new-password').value = '';
+    });
+  }
+});
